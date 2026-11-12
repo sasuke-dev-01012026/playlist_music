@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#000000">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>PlayList Music</title>
 
@@ -10,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* Design tokens, reset, dan gaya global */
@@ -33,7 +34,7 @@
       --on-accent: #fff;
       --gap: 7px;
       --nav-h: 63px;
-      --player-h: 83px;
+      --player-h: 86px;
       --side-w: 299px;
       --r: 9px;
 
@@ -217,7 +218,7 @@
       border: 0;
       outline: 0;
       color: #fff;
-      font: var(--fw-medium) var(--fs-md)/1.4 "Montserrat", sans-serif;
+      font: var(--fw-medium) var(--fs-md)/1.4 var(--font, "Montserrat", sans-serif);
     }
 
     .nav-right {
@@ -1100,7 +1101,7 @@
     @media (max-width:720px) {
       :root {
         --nav-h: 55px;
-        --player-h: 131px;
+        --player-h: 134px;
         --fs-xl: 1rem;     /* 16px */
         --fs-2xl: 1.25rem; /* 20px */
       }
@@ -1416,16 +1417,16 @@
     .theater { display: none; }
     .theater.show:not(.watching) { display: block; }
     /* Halaman tontonan: layar penuh seperti YouTube, menutupi navbar, sidebar, dan konten. Bar pemutar di bawah tetap terlihat (kontrol video bawaan YouTube dimatikan). */
-    .theater.watching { position: fixed; top: 0; left: 0; right: 0; bottom: calc(var(--player-h) + var(--gap)); z-index: 50; overflow-y: auto; overscroll-behavior: contain; background: #0f0f0f; display: grid; grid-template-columns: minmax(0, 1fr) 299px; gap: 15px; align-items: start; align-content: start; padding: 0 23px 23px; margin: 0; }
+    .theater.watching { position: fixed; top: 0; left: 0; right: 0; bottom: calc(var(--player-h) + var(--gap)); z-index: 50; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; background: #0f0f0f; display: grid; grid-template-columns: minmax(0, 1fr) 299px; gap: 15px; align-items: start; align-content: start; padding: 0 23px 23px; margin: 0; }
     .theater-main { min-width: 0; }
-    .theater-back { margin: 11px 0; }
+    .theater-back { margin: 11px 0; --tb-y: 11px; }
     /* Versi Videos (hijau): footer kredit disembunyikan di semua halaman */
     :root[data-mode="lyric"] .credit { display: none; }
     .theater-stage { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 9px; }
     .theater-frame { position: absolute; inset: 0; background: #000; border-radius: 9px; overflow: hidden; }
     .theater-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
     /* Mini: di luar halaman tontonan, atau saat pemutar tergulir keluar layar. Hanya CSS, iframe tidak berpindah tempat. */
-    .theater.mini .theater-frame, .theater:not(.watching) .theater-frame { position: fixed; inset: auto 15px calc(var(--player-h) + 15px) auto; width: 355px; max-width: calc(100vw - 31px); aspect-ratio: 16 / 9; z-index: 60; border: 1px solid rgba(255, 255, 255, .14); box-shadow: 0 7px 27px rgba(0, 0, 0, .55); }
+    .theater.mini .theater-frame, .theater:not(.watching) .theater-frame { position: fixed; inset: auto 15px calc(var(--player-h) + 12px) auto; width: 355px; max-width: calc(100vw - 31px); aspect-ratio: 16 / 9; z-index: 60; border: 1px solid rgba(255, 255, 255, .14); box-shadow: 0 7px 27px rgba(0, 0, 0, .55); }
     .theater:not(.watching) .theater-stage { height: 0; aspect-ratio: auto; background: none; }
     .theater:not(.watching) .theater-back, .theater:not(.watching) .theater-info, .theater:not(.watching) .theater-next, .theater:not(.watching) .theater-poster { display: none; }
     .mini-btn {
@@ -1445,6 +1446,15 @@
     .mini-btn.close { right: 7px; }
     .mini-btn:hover { background: #000; }
     .theater.mini .mini-btn, .theater:not(.watching) .mini-btn { display: grid; }
+    /* Versi Videos (hijau): baris tombol Kembali di atas video berwarna hitam, sama seperti nav logo + pencarian */
+    .theater.watching .theater-back { position: relative; }
+    .theater.watching .theater-back::before { content: ""; position: absolute; z-index: -1; top: calc(var(--tb-y, 12px) * -1); bottom: calc(var(--tb-y, 12px) * -1); left: -100vw; right: -100vw; background: var(--bg, #000); pointer-events: none; }
+    /* Tarik dari atas untuk memuat ulang web (indikator lingkaran kecil di atas layar) */
+    .ptr { position: fixed; top: env(safe-area-inset-top, 0px); left: 50%; z-index: 90; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--panel, #181818); color: var(--accent); box-shadow: 0 3px 12px rgba(0, 0, 0, .5); pointer-events: none; opacity: 0; transform: translate(-50%, -52px); transition: transform .2s ease, opacity .2s ease; }
+    .ptr.pulling { transition: none; }
+    .ptr.loading { opacity: 1; transform: translate(-50%, 16px); }
+    .ptr.loading i { animation: ptr-spin .8s linear infinite; }
+    @keyframes ptr-spin { to { transform: rotate(360deg); } }
     /* Poster: tampil bila halaman tontonan dibuka (mis. dari tautan) tetapi video belum diputar. */
     .theater-poster { display: none; position: absolute; inset: 0; z-index: 2; padding: 0; border: 0; border-radius: 9px; overflow: hidden; background: #000; cursor: pointer; }
     .theater.poster .theater-poster { display: block; }
@@ -1509,7 +1519,7 @@
     }
     @media (max-width:720px) {
       .theater.watching { bottom: var(--player-h); padding: 0 0 15px; gap: 11px; }
-      .theater-back { margin: 9px 13px; }
+      .theater-back { margin: 9px 13px; --tb-y: 9px; --tb-x: 13px; }
       .theater-stage, .theater-frame, .theater-poster { border-radius: 0; }
       .theater-info { padding: 9px 13px 0; }
       .theater-title {
@@ -1780,7 +1790,7 @@
     .now img { width: 56px; height: 56px; border-radius: var(--shape-sm); box-shadow: var(--elev-1); }
     .now-title { font-weight: var(--fw-semibold); line-height: 1.35; }
     .now-desc { line-height: 1.35; }
-    .controls { gap: 8px; }
+    .controls { gap: 9px; padding-bottom: 2px; }
     .btns { gap: 12px; }
     .ctl {
       width: 40px;
@@ -1896,8 +1906,22 @@
     .theater-info { gap: 12px; padding: 12px 4px 0; }
     .theater-title { font-weight: var(--fw-bold); line-height: 1.35; }
     .theater-meta { line-height: 1.45; margin-top: 4px; }
+
+    /* Info musik di bawah pemutar: cover album bulat di kiri, artis / judul / album di kanan */
+    .theater-info { align-items: center; gap: 14px; }
+    .theater-cover { flex: none; width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #333; box-shadow: var(--elev-1); }
+    .theater-cover[hidden] { display: none; }
+    .theater-text { display: flex; flex-direction: column; gap: 2px; }
+    .theater-artist { font-size: var(--fs-sm); font-weight: var(--fw-semibold); line-height: 1.3; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .theater-artist:empty, .theater-meta:empty { display: none; }
+    .theater-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .theater-meta { margin-top: 0; font-size: var(--fs-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    @media (max-width:720px) {
+      .theater-info { gap: 12px; }
+      .theater-cover { width: 48px; height: 48px; }
+    }
     .theater.watching { gap: 16px; }
-    .theater-back { margin: 12px 0; }
+    .theater-back { margin: 12px 0; --tb-y: 12px; }
     .mini-btn { width: 32px; height: 32px; top: 8px; transition: background-color var(--dur-m) var(--ease), transform var(--dur-s) var(--ease); }
     .mini-btn.open { left: 8px; }
     .mini-btn.close { right: 8px; }
@@ -1908,6 +1932,59 @@
     .next-item:active { background: var(--sl-press); }
     .next-thumb { border-radius: var(--shape-sm); }
     .next-title { font-weight: var(--fw-semibold); line-height: 1.35; }
+
+    /* ---- Up next (Videos): label seksi, indikator sedang diputar, album, Love, dan durasi ---- */
+    .next-item { position: relative; align-items: stretch; }
+    .next-thumb-box { position: relative; flex: none; width: 109px; align-self: flex-start; }
+    .next-thumb-box .next-thumb { display: block; width: 100%; }
+    .next-play { position: absolute; inset: 0; display: grid; place-items: center; border-radius: var(--shape-sm); background: #00000066; color: var(--accent); font-size: var(--fs-md); opacity: 0; transition: opacity var(--dur-m) var(--ease); pointer-events: none; }
+    .next-item:hover .next-play { opacity: 1; }
+    .next-text { flex: 1; align-self: center; display: flex; flex-direction: column; gap: 2px; }
+    .next-title { font-size: var(--fs-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .next-sub { margin-top: 0; font-size: var(--fs-xs); color: #d0d0d0; }
+    .next-album { font-size: var(--fs-2xs); line-height: 1.3; color: var(--muted); opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* Kolom kanan Up next: pegangan geser di atas, durasi di bawah; lebar tetap supaya durasi rata kanan dan lurus antar item */
+    .next-side { flex: none; width: 40px; display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; align-self: stretch; margin: -4px -4px -2px 0; }
+    .next-drag { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: var(--muted); font-size: var(--fs-sm); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: background-color var(--dur-m) var(--ease), color var(--dur-m) var(--ease); }
+    .next-drag:hover { background: var(--sl-hover); color: var(--accent); }
+    .next-drag:active { cursor: grabbing; background: var(--sl-press); }
+    .next-drag:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .next-drag-lines { display: block; width: 18px; height: 8px; box-sizing: border-box; border-top: 2px solid currentColor; border-bottom: 2px solid currentColor; border-radius: 1px; pointer-events: none; }
+    .next-dur { padding: 0 6px 2px 0; font-size: var(--fs-2xs); font-weight: var(--fw-medium, 500); font-variant-numeric: tabular-nums; letter-spacing: .02em; line-height: 1; color: var(--muted); opacity: .75; text-align: right; white-space: nowrap; }
+    /* Saat digeser: item terangkat, item lain bergeser mulus memberi tempat */
+    .next-list.is-dragging { user-select: none; -webkit-user-select: none; }
+    .next-list.is-dragging .next-item:not(.dragging) { transition: transform 160ms var(--ease); }
+    .next-item.dragging { z-index: 3; cursor: grabbing; background: color-mix(in srgb, var(--accent) 14%, var(--bg, #121212)); box-shadow: var(--elev-3); transition: none; }
+    .next-item.dragging .next-drag { color: var(--accent); }
+    @media (max-width:720px) {
+      .next-thumb-box { width: 112px; }
+      .next-side { width: 44px; }
+      .next-drag { width: 40px; height: 40px; }
+      .next-play { display: none; }
+    }
+    @media (max-width:380px) {
+      .next-thumb-box { width: 96px; }
+      .next-item { gap: 10px; }
+    }
+
+    /* Info musik di bawah video: kolom kanan = durasi (kanan atas) + Love / Play-Pause / Bagikan (bawah, horizontal) */
+    .theater-side { flex: none; align-self: stretch; display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: 8px; margin-right: -6px; }
+    .theater-dur { padding: 2px 10px 0 0; font-size: var(--fs-sm); font-weight: var(--fw-medium, 500); font-variant-numeric: tabular-nums; letter-spacing: .02em; line-height: 1; color: var(--muted); white-space: nowrap; }
+    .theater-dur:empty { display: none; }
+    .theater-actions { display: flex; align-items: center; }
+    .th-act { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; color: var(--muted); font-size: var(--fs-lg); transition: background-color var(--dur-m) var(--ease), color var(--dur-m) var(--ease), transform var(--dur-s) var(--ease); }
+    .th-act:hover:not(:disabled) { background: var(--sl-hover); color: #fff; }
+    .th-act:active:not(:disabled) { background: var(--sl-press); transform: scale(.9); }
+    .th-act:disabled { opacity: .4; cursor: default; }
+    .th-act.play.on, .th-act.play:hover:not(:disabled), .th-act.share:hover:not(:disabled) { color: var(--accent); }
+    .th-act.fav.on, .th-act.fav.on:hover:not(:disabled) { color: #e8115b; } /* sama dengan ikon love di bar pemutar */
+    .th-act:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .theater-side[hidden] { display: none; }
+    @media (max-width:720px) {
+      .th-act { width: 34px; height: 34px; font-size: var(--fs-md); }
+      .theater-side { margin-right: -4px; }
+      .theater-dur { padding-right: 8px; font-size: var(--fs-xs); }
+    }
 
     /* ---- Responsif ---- */
     @media (max-width:1100px) {
@@ -1943,7 +2020,7 @@
       .theater.watching { padding: 0 0 16px; }
       .theater-stage, .theater-frame, .theater-poster { border-radius: 0; box-shadow: none; }
       .theater-info { padding: 12px 16px 0; }
-      .theater-back { margin: 8px 12px; }
+      .theater-back { margin: 8px 12px; --tb-y: 8px; --tb-x: 12px; }
       .theater-next { margin: 0 8px; }
     }
 
@@ -1992,6 +2069,200 @@
       .pager button { min-width: 34px; height: 34px; padding: 0 6px; }
       .pager .gap { padding: 0; }
     }
+
+    /* =====================================================================
+       Refinement layer v3 — penyempurnaan visual akhir
+       Hanya CSS. Struktur HTML, JavaScript, data, dan palet aksen
+       (ungu = Music, hijau = Videos) tidak diubah.
+       Prinsip: satu skala permukaan (tonal surface), satu skala sudut,
+       tanpa gradient dekoratif, state yang konsisten di semua komponen.
+       ===================================================================== */
+
+    :root {
+      color-scheme: dark;
+      --font: "Plus Jakarta Sans", "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+      /* Skala permukaan netral: panel < kartu < hover < terpilih */
+      --panel: #121212;
+      --card: #1a1a1a;
+      --card-h: #242424;
+      --chip: #202020;
+      --surface-4: #2d2d2d;
+      --outline: #ffffff1f;
+      --muted: #b8b8b8;
+
+      /* Kontainer aksen (state terpilih yang lembut), mengikuti mode aktif */
+      --accent-c: color-mix(in srgb, var(--accent) 24%, var(--panel));
+      --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+
+      /* Skala sudut: kontrol = pil, kartu = 16, cover = 12, thumb kecil = 8 */
+      --shape-card: 16px;
+      --shape-cover: 12px;
+      --shape-thumb: 8px;
+
+      /* Tipografi: bobot lebih ringan, tracking rapat hanya untuk judul besar */
+      --fs-2xl: 1.375rem;
+      --ls-eyebrow: .01em;
+    }
+
+    body { font-family: var(--font); font-feature-settings: "tnum" 0, "kern" 1; }
+    .search input { font-family: var(--font); }
+    h1, h2, .sub { text-wrap: balance; }
+    :root[data-mode="lyric"] { --accent-c: color-mix(in srgb, var(--lyric) 22%, var(--panel)); }
+
+    /* ---- Permukaan utama: rata, tanpa gradient ---- */
+    .main { background: var(--panel); box-shadow: none; padding: 8px 28px 40px; }
+    .side { background: var(--panel); box-shadow: none; }
+    .player-bar { background: var(--panel); box-shadow: none; padding: 0 16px; }
+
+    /* ---- Teks bagian & judul ---- */
+    .section h2 { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -.015em; margin-bottom: 14px; }
+    .sub { font-size: var(--fs-xl); font-weight: var(--fw-semibold); }
+    .side-head { text-transform: none; font-size: var(--fs-md); letter-spacing: .01em; font-weight: var(--fw-semibold); }
+    .hero small { text-transform: none; font-size: var(--fs-sm); font-weight: var(--fw-semibold); letter-spacing: .01em; opacity: .75; }
+    .hero h1 { font-weight: 800; letter-spacing: -.025em; }
+    .hero>img, .hero>.gen { border-radius: var(--shape-card); }
+    .hero.round>img { border-radius: 50%; }
+
+    /* ---- Navbar & pencarian ---- */
+    .search { background: var(--card); box-shadow: inset 0 0 0 1px var(--outline); border-color: transparent; }
+    .search:hover { background: var(--card-h); }
+    .search:focus-within { background: var(--card); border-color: transparent; box-shadow: inset 0 0 0 2px var(--accent-h); color: #fff; }
+    .search input::placeholder { font-weight: var(--fw-regular); }
+    .ver-switch { background: var(--card); }
+    .ver-btn:hover { background: var(--surface-4); }
+    .nav-link:hover { background: var(--sl-hover); }
+
+    /* ---- Navigasi samping: item aktif memakai kontainer aksen ---- */
+    .nav-item:hover { background: var(--sl-hover); }
+    .nav-item.active { background: var(--accent-c); color: #fff; }
+    .nav-item.active i { color: var(--accent-h); }
+    .nav-item.active:hover { background: color-mix(in srgb, var(--accent) 30%, var(--panel)); }
+    .promo { background: var(--card); }
+
+    /* Tab di HP: terpilih = aksen penuh, sama dengan chip kategori dan pagination */
+    .tabs .nav-item { background: var(--chip); }
+    .tabs .nav-item.active { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+    .tabs .nav-item.active i { color: inherit; }
+    .tabs .nav-item.active:hover { background: var(--accent-h); }
+
+    /* ---- Kartu ---- */
+    .card { border-radius: var(--shape-card); padding: 14px; }
+    .card:hover, .card.playing { background: var(--card-h); }
+    .card:hover { box-shadow: none; }
+    .cover { border-radius: var(--shape-cover); box-shadow: 0 2px 8px #00000066; margin-bottom: 14px; }
+    .card.round .cover { border-radius: 50%; }
+    .card-title { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
+    .card.playing .card-title, .row.playing .t em, .vcard.playing .vtitle { color: var(--accent-h); }
+    .card-play { color: var(--on-accent); box-shadow: 0 4px 12px #00000080; }
+    .card-play:hover { background: var(--accent-h); }
+    .gtile { border-radius: var(--shape-card); padding: 18px; }
+    .gtile:hover { transform: none; filter: brightness(1.1); box-shadow: var(--elev-2); }
+
+    /* ---- Daftar lagu ---- */
+    .row { border-radius: var(--shape-cover); }
+    .row.head { text-transform: none; font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: .02em; border-bottom: 1px solid var(--outline); border-radius: 0; }
+    .row:not(.head):hover { background: #ffffff10; }
+    .row.playing:not(.head) { background: var(--accent-soft); }
+    .t img { border-radius: var(--shape-thumb); }
+    .t em { font-weight: var(--fw-semibold); }
+
+    /* ---- Video ---- */
+    .vthumb { border-radius: var(--shape-card); box-shadow: none; background: var(--card); }
+    .vcard:hover .vthumb { box-shadow: 0 6px 18px #00000099; }
+    .vplay { color: var(--on-accent); }
+    .vdur { border-radius: 6px; background: #000000cc; }
+    .vfav { background: #000000b3; }
+    .theater.watching { background: var(--panel); }
+    .theater-stage, .theater-frame, .theater-poster { border-radius: var(--shape-card); }
+    .theater-title { font-weight: var(--fw-bold); letter-spacing: -.01em; }
+    .next-item { border-radius: var(--shape-cover); }
+    .next-thumb, .next-play { border-radius: var(--shape-thumb); }
+    .next-item.dragging { background: var(--surface-4); }
+
+    /* ---- Bar pemutar ---- */
+    .now img { border-radius: var(--shape-cover); box-shadow: 0 2px 8px #00000066; }
+    .now-title { font-weight: var(--fw-semibold); }
+    #play { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+    #play:hover { background: var(--accent-h); box-shadow: var(--elev-2); }
+    .ctl.active { color: var(--accent-h); }
+    .ctl.active::after { background: var(--accent-h); }
+
+    /* Slider: bagian terisi selalu berwarna aksen agar progres terbaca jelas */
+    input[type=range] {
+      background: linear-gradient(to right, var(--accent-h) var(--p, 0%), #ffffff2e var(--p, 0%));
+    }
+    input[type=range]:hover { background: linear-gradient(to right, var(--accent-h) var(--p, 0%), #ffffff40 var(--p, 0%)); }
+    input[type=range]::-webkit-slider-thumb { background: #fff; }
+
+    /* ---- Chip, tab, pagination, filter huruf ---- */
+    .cat-bar { background: color-mix(in srgb, var(--panel) 88%, transparent); }
+    .cat-chip, .pager button, .letters button { background: var(--chip); }
+    .cat-chip:hover, .pager button:hover:not(:disabled):not(.active), .letters button:hover:not(:disabled):not(.active) { background: var(--surface-4); }
+    .pager button, .letters button { min-width: 38px; height: 38px; padding: 0 10px; }
+    .pager { justify-content: safe center; gap: 6px; }
+    .pager-info { font-weight: var(--fw-medium); }
+
+    /* ---- Toast & kredit ---- */
+    .toast { border-radius: var(--shape-cover); }
+    .credit { font-weight: var(--fw-medium); }
+    .credit-name { font-size: var(--fs-lg); }
+
+    /* ---- Layar kecil ---- */
+    @media (max-width:720px) {
+      .main { padding: 4px 16px 24px; }
+      .card { padding: 10px; border-radius: var(--shape-cover); }
+      .cover { border-radius: var(--shape-thumb); margin-bottom: 10px; }
+      .card.round .cover { border-radius: 50%; }
+      .gtile { padding: 14px; border-radius: var(--shape-cover); }
+      .row { border-radius: var(--shape-thumb); }
+      .vthumb, .theater-stage, .theater-frame, .theater-poster { border-radius: var(--shape-cover); }
+      .theater-stage, .theater-frame, .theater-poster { border-radius: 0; }
+      .player-bar { background: var(--panel); border-top: 1px solid var(--outline); }
+      #play { width: 48px; height: 48px; }
+      .pager { gap: 4px; }
+      .pager button, .letters button { min-width: 40px; height: 40px; padding: 0 8px; }
+      .section h2 { font-size: var(--fs-2xl); }
+    }
+    @media (max-width:420px) {
+      .pager button { min-width: 36px; height: 36px; padding: 0 6px; }
+    }
+    @media (max-width:340px) {
+      .pager button { min-width: 32px; height: 32px; padding: 0 4px; }
+    }
+
+    /* Up next sejajar dengan video: tombol Kembali setinggi 36px + margin 12px atas/bawah = 60px, dikurangi padding item 8px */
+    @media (min-width:1101px) {
+      .theater.watching .theater-next { margin-top: 52px; }
+    }
+
+    /* Halaman tontonan: artis, judul lagu, dan album selalu satu baris, terpotong dengan titik-titik (…) */
+    .theater-text { min-width: 0; }
+    .theater-title,
+    .theater-meta,
+    .theater-artist {
+      display: block;
+      max-width: 100%;
+      white-space: nowrap;
+      text-wrap: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Penyesuaian spacing Music Bar */
+    .player-bar .now { margin-top: 2px; }              /* cover + judul lagu: jarak atas +2px */
+    .player-bar #play { margin-top: -2px; margin-bottom: -2px; } /* tombol Play: jarak atas & bawah -2px */
+    .player-bar #dur { margin-bottom: 2px; }           /* durasi lagu: jarak bawah +2px */
+
+    /* Videos (hijau): info lagu sudah tampil di bawah pemutar video, jadi bar tidak menampilkan data lagu (cover, judul, dll.) dan tingginya diperkecil; desain tetap identik */
+    :root[data-mode="lyric"] { --player-h: 80px; }
+    :root[data-mode="lyric"] .player-bar .now { margin-top: 0; }
+    :root[data-mode="lyric"] .player-bar .now > * { display: none; }
+    @media (max-width:720px) {
+      :root[data-mode="lyric"] { --player-h: 84px; }
+      :root[data-mode="lyric"] .player-bar { gap: 0; }
+    }
+
   </style>
 </head>
 
@@ -2016,8 +2287,16 @@
             <button class="theater-poster" id="thPoster" type="button" aria-label="Putar video"><img referrerpolicy="no-referrer" alt=""><span class="vplay"><i class="fa-solid fa-play"></i></span></button>
           </div>
           <div class="theater-info">
-            <div class="theater-text"><div class="theater-title" id="thTitle"></div><div class="theater-meta" id="thMeta"></div></div>
-            <button class="fav-btn" id="thFav" type="button" aria-label="Tambah ke Favorites" title="Tambah ke Favorites"><i class="fa-regular fa-heart"></i></button>
+            <img class="theater-cover" id="thCover" hidden referrerpolicy="no-referrer" alt="">
+            <div class="theater-text"><div class="theater-artist" id="thArtist"></div><div class="theater-title" id="thTitle"></div><div class="theater-meta" id="thMeta"></div></div>
+            <div class="theater-side" id="thSide" hidden>
+              <span class="theater-dur" id="thDur"></span>
+              <div class="theater-actions">
+                <button class="th-act fav" id="thFav" type="button" aria-pressed="false" aria-label="Tambah ke Favorites" title="Tambah ke Favorites"><i class="fa-regular fa-heart"></i></button>
+                <button class="th-act play" id="thPlay" type="button" aria-label="Putar" title="Putar"><i class="fa-solid fa-play"></i></button>
+                <button class="th-act share" id="thShare" type="button" aria-label="Bagikan link" title="Bagikan link"><i class="fa-solid fa-share"></i></button>
+              </div>
+            </div>
           </div>
         </div>
         <aside class="theater-next" aria-label="Up next"><div class="next-list" id="thNext"></div></aside>
@@ -2078,7 +2357,7 @@
     const HOME_RECENT_COUNT = 11;
 
     /** Jumlah item per halaman pada daftar Songs, Artists, dan Albums (pagination angka). */
-    const PAGE_SIZE = 50;
+    const PAGE_SIZE = 100;
 
     /** Halaman detail/pencarian dipetakan ke menu utama yang harus tampil aktif. */
     const SECTION_OF_VIEW = Object.freeze({
@@ -2097,6 +2376,7 @@
       PREFETCH_READY_MS: 6000,
       PREFETCH_TIMEOUT_MS: 10000,
       REFRESH_DEBOUNCE_MS: 400,
+      ALPHA_ROTATE_MS: 30000, // Videos: urutan kelompok artis di halaman Songs bergeser satu huruf tiap interval ini
     });
 
     const MESSAGES = Object.freeze({
@@ -2239,6 +2519,16 @@
 
     /** Durasi lagu untuk tampilan; belum diketahui (0) tampil "--:--", bukan "0:00". */
     const formatDuration = (seconds) => (seconds > 0 ? formatTime(seconds) : '--:--');
+
+    /** Durasi video untuk daftar Up next: selalu mm:ss (03:45), atau j:mm:ss (1:02:15) bila lebih dari satu jam; belum diketahui = "--:--". */
+    const formatClock = (seconds) => {
+      if (!(seconds > 0)) return '--:--';
+      const total = Math.floor(seconds);
+      const h = Math.floor(total / 3600);
+      const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+      const s = String(total % 60).padStart(2, '0');
+      return h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+    };
 
     /** Ringkasan koleksi lagu, mis. "3 lagu · 10 mnt 05 dtk". */
     function formatTotal(songs) {
@@ -2456,7 +2746,9 @@
         {"id":194,"name":"Eminem","bio":"Pop","img":"undefined","cat":"int"},
         {"id":197,"name":"Frank Sinatra","bio":"Pop","img":"undefined","cat":"int"},
         {"id":198,"name":"George Michael","bio":"Pop","img":"undefined","cat":"int"},
-        {"id":199,"name":"Green Day","bio":"Punk Rock","img":"undefined","cat":"int"}
+        {"id":199,"name":"Green Day","bio":"Punk Rock","img":"undefined","cat":"int"},
+        {"id":206,"name":"Miley Cyrus","bio":"Pop","img":"undefined","cat":"int"},
+        {"id":207,"name":"Backstreet Boys","bio":"Pop","img":"undefined","cat":"int"}
       ],
       genres: [
         {"id":1,"name":"Pop","color":"#e8115b"},
@@ -2712,7 +3004,7 @@
         {"id":22,"name":"My Everything","artistId":12,"year":2014,"colorId":1},
         {"id":23,"name":"Dangerous Woman","artistId":12,"year":2016,"colorId":1},
         {"id":24,"name":"Sweetener","artistId":12,"year":2018,"colorId":1},
-        {"id":25,"name":"Stuck With You (Single)","artistId":12,"year":2020,"colorId":1},
+        {"id":25,"name":"Stuck with U (Single)","artistId":12,"year":2020,"colorId":1},
         {"id":26,"name":"Positions","artistId":12,"year":2020,"colorId":1},
         {"id":27,"name":"Eternal Sunshine","artistId":12,"year":2024,"colorId":1},
         {"id":34,"name":"Sounding the Seventh Trumpet","artistId":15,"year":2001,"colorId":4},
@@ -2782,28 +3074,38 @@
         {"id":323,"name":"Album Belum di Ketahui","artistId":194,"year":null,"colorId":1},
         {"id":324,"name":"Album Belum di Ketahui","artistId":197,"year":null,"colorId":1},
         {"id":325,"name":"Album Belum di Ketahui","artistId":198,"year":null,"colorId":1},
-        {"id":326,"name":"Album Belum di Ketahui","artistId":199,"year":null,"colorId":5}
+        {"id":326,"name":"Album Belum di Ketahui","artistId":199,"year":null,"colorId":5},
+        {"id":328,"name":"Heaven of Love","artistId":1,"year":2004,"colorId":2},
+        {"id":329,"name":"Lebih Indah","artistId":2,"year":2012,"colorId":1},
+        {"id":330,"name":"Anugerah Terindah (Single)","artistId":6,"year":2023,"colorId":1},
+        {"id":331,"name":"Cinta Luar Biasa","artistId":6,"year":2019,"colorId":1},
+        {"id":332,"name":"Jangan Pernah Selingkuh","artistId":9,"year":2008,"colorId":2},
+        {"id":333,"name":"Sendiri Dulu","artistId":11,"year":2001,"colorId":1},
+        {"id":334,"name":"Speak Your Mind","artistId":140,"year":2018,"colorId":1},
+        {"id":335,"name":"Narrated for You","artistId":185,"year":2018,"colorId":1},
+        {"id":351,"name":"Album Belum di Ketahui","artistId":206,"year":null,"colorId":1},
+        {"id":352,"name":"Album Belum di Ketahui","artistId":207,"year":null,"colorId":1}
       ],
       songs: [
         {"id":1,"name":"Masih Sahabatku Kekasihku","albumId":1,"genreId":2,"dur":280,"sc":"1093312780"},
         {"id":2,"name":"Haruskah Ku Mati","albumId":2,"genreId":2,"dur":285,"sc":"1089327199"},
-        {"id":3,"name":"Manusia Bodoh","albumId":3,"genreId":2,"dur":270,"sc":"235978860"},
-        {"id":4,"name":"Surga Cinta","albumId":3,"genreId":2,"dur":270,"sc":"284308292"},
+        {"id":3,"name":"Manusia Bodoh","albumId":328,"genreId":2,"dur":270,"sc":"235978860"},
+        {"id":4,"name":"Surga Cinta","albumId":2,"genreId":2,"dur":270,"sc":"284308292"},
         {"id":5,"name":"Pemain Cinta","albumId":3,"genreId":2,"dur":255,"sc":"323777705"},
-        {"id":6,"name":"Lebih Indah","albumId":4,"genreId":1,"dur":0,"sc":"43164651"},
+        {"id":6,"name":"Lebih Indah","albumId":329,"genreId":1,"dur":0,"sc":"43164651"},
         {"id":7,"name":"Sadis","albumId":5,"genreId":1,"dur":0,"sc":"262758129"},
         {"id":8,"name":"Matahariku","albumId":6,"genreId":1,"dur":0,"sc":"319692276"},
         {"id":9,"name":"Sebuah Rasa","albumId":7,"genreId":1,"dur":0,"sc":"279112910"},
         {"id":10,"name":"Rindu","albumId":8,"genreId":1,"dur":0,"sc":"260809379"},
         {"id":11,"name":"Pupus","albumId":9,"genreId":2,"dur":0,"sc":"157681703"},
         {"id":12,"name":"Sadis (Cover)","albumId":9,"genreId":1,"dur":0,"sc":"970678279"},
-        {"id":13,"name":"Anugerah Terindah","albumId":10,"genreId":1,"dur":0,"sc":"1973669671"},
-        {"id":14,"name":"Hanya Rindu","albumId":10,"genreId":1,"dur":0,"sc":"618897120"},
+        {"id":13,"name":"Anugerah Terindah","albumId":330,"genreId":1,"dur":0,"sc":"1973669671"},
+        {"id":14,"name":"Hanya Rindu","albumId":331,"genreId":1,"dur":0,"sc":"618897120"},
         {"id":15,"name":"Sempurna","albumId":11,"genreId":2,"dur":270,"sc":"1705945401"},
         {"id":16,"name":"Main Hati","albumId":12,"genreId":2,"dur":255,"sc":"1083132556"},
         {"id":17,"name":"Sampai Tutup Usia","albumId":13,"genreId":1,"dur":255,"sc":"633992664"},
-        {"id":18,"name":"Jangan Pernah Selingkuh","albumId":14,"genreId":2,"dur":240,"sc":"938391124"},
-        {"id":19,"name":"Luka (Uhh)","albumId":14,"genreId":2,"dur":260,"sc":"69164765"},
+        {"id":18,"name":"Jangan Pernah Selingkuh","albumId":332,"genreId":2,"dur":240,"sc":"938391124"},
+        {"id":19,"name":"Luka","albumId":332,"genreId":2,"dur":260,"sc":"69164765"},
         {"id":20,"name":"Kekasih Terhebat","albumId":15,"genreId":1,"dur":240,"sc":"58874518"},
         {"id":21,"name":"Ternyata Cinta","albumId":15,"genreId":1,"dur":250,"sc":"62873577"},
         {"id":22,"name":"Hampa","albumId":16,"genreId":1,"dur":255,"sc":"259970631"},
@@ -2815,10 +3117,10 @@
         {"id":28,"name":"Lirih","albumId":18,"genreId":1,"dur":270,"sc":"88272712"},
         {"id":29,"name":"Aku dan Dirimu","albumId":19,"genreId":1,"dur":270,"sc":"1606934511"},
         {"id":30,"name":"Karena Aku Tlah Denganmu","albumId":20,"genreId":1,"dur":255,"sc":"175099525"},
-        {"id":31,"name":"Penjaga Hati","albumId":21,"genreId":1,"dur":270,"sc":"82744783"},
+        {"id":31,"name":"Penjaga Hati","albumId":333,"genreId":1,"dur":270,"sc":"82744783"},
         {"id":32,"name":"Satu","albumId":21,"genreId":1,"dur":300,"sc":"1498487866"},
-        {"id":33,"name":"Tulus","albumId":21,"genreId":1,"dur":255,"sc":"79631450"},
-        {"id":34,"name":"Cintakan Membawamu Kembali","albumId":21,"genreId":1,"dur":285,"sc":"256218440"},
+        {"id":33,"name":"Tulus","albumId":16,"genreId":1,"dur":255,"sc":"79631450"},
+        {"id":34,"name":"Cinta 'Kan Membawamu Kembali","albumId":21,"genreId":1,"dur":285,"sc":"256218440"},
         {"id":42,"name":"Pemilik Hati","albumId":28,"genreId":2,"dur":260,"sc":"8712099"},
         {"id":43,"name":"Hargai Aku","albumId":29,"genreId":2,"dur":240,"sc":"41858284"},
         {"id":44,"name":"Harusnya Aku","albumId":30,"genreId":2,"dur":250,"sc":"275853672"},
@@ -2826,12 +3128,12 @@
         {"id":46,"name":"Katakan Sejujurnya","albumId":30,"genreId":2,"dur":240,"sc":"193290821"},
         {"id":47,"name":"Asal Kau Bahagia","albumId":31,"genreId":2,"dur":260,"sc":"334046622"},
         {"id":49,"name":"Apa Kabar Sayang (Cover Hanin Dhiya)","albumId":32,"genreId":2,"dur":250,"sc":"624649437"},
-        {"id":50,"name":"Mabuk Cinta","albumId":32,"genreId":2,"dur":240,"sc":"299866601"},
-        {"id":51,"name":"Mau Dibawa Kemana","albumId":32,"genreId":2,"dur":255,"sc":"34366661"},
-        {"id":52,"name":"Bebaskan Diriku","albumId":32,"genreId":2,"dur":250,"sc":"207436908"},
+        {"id":50,"name":"Mabuk Cinta","albumId":29,"genreId":2,"dur":240,"sc":"299866601"},
+        {"id":51,"name":"Mau Dibawa Kemana","albumId":28,"genreId":2,"dur":255,"sc":"34366661"},
+        {"id":52,"name":"Bebaskan Diriku","albumId":29,"genreId":2,"dur":250,"sc":"207436908"},
         {"id":53,"name":"Penantian","albumId":32,"genreId":2,"dur":250,"sc":"317924346"},
-        {"id":54,"name":"Cinta Itu Buta","albumId":32,"genreId":2,"dur":255,"sc":"2043633"},
-        {"id":55,"name":"Buka Hatimu","albumId":32,"genreId":2,"dur":260,"sc":"11289208"},
+        {"id":54,"name":"Cinta Itu Buta","albumId":28,"genreId":2,"dur":255,"sc":"2043633"},
+        {"id":55,"name":"Buka Hatimu","albumId":28,"genreId":2,"dur":260,"sc":"11289208"},
         {"id":56,"name":"Berakhirlah Sudah","albumId":33,"genreId":2,"dur":260,"sc":"196494847"},
         {"id":88,"name":"Ay","albumId":40,"genreId":1,"dur":245,"sc":"137172874"},
         {"id":89,"name":"Cinta","albumId":40,"genreId":1,"dur":250,"sc":"290650407"},
@@ -3137,11 +3439,11 @@
         {"id":35,"name":"One Last Time","albumId":22,"genreId":1,"dur":197,"sc":"203405316"},
         {"id":36,"name":"Side to Side","albumId":23,"genreId":1,"dur":226,"sc":"300788017"},
         {"id":37,"name":"Bloodline","albumId":24,"genreId":9,"dur":216,"sc":"1491272296"},
-        {"id":38,"name":"Stuck With You","albumId":25,"genreId":9,"dur":208,"sc":"868491022"},
-        {"id":39,"name":"Positions","albumId":26,"genreId":9,"dur":172,"sc":"1138026289"},
+        {"id":38,"name":"Stuck with U","albumId":25,"genreId":9,"dur":208,"sc":"868491022"},
+        {"id":39,"name":"positions","albumId":26,"genreId":9,"dur":172,"sc":"1138026289"},
         {"id":40,"name":"supernatural","albumId":27,"genreId":1,"dur":206,"sc":"2086434231"},
-        {"id":41,"name":"We Can't Be Friends","albumId":27,"genreId":1,"dur":228,"sc":"1776786003"},
-        {"id":57,"name":"Warmness on the Soul (Fatin Majidi cover)","albumId":34,"genreId":3,"dur":265,"sc":"967734691"},
+        {"id":41,"name":"we can't be friends (wait for your love)","albumId":27,"genreId":1,"dur":228,"sc":"1776786003"},
+        {"id":57,"name":"Warmness on the Soul (Fatin Majidi cover)","albumId":35,"genreId":3,"dur":265,"sc":"967734691"},
         {"id":63,"name":"City of Evil Full Album","albumId":36,"genreId":4,"dur":1500,"sc":"1966892507"},
         {"id":64,"name":"Beast and the Harlot","albumId":36,"genreId":4,"dur":340,"sc":"106285898"},
         {"id":65,"name":"Beast and the Harlot, Burn It Down, Blinded in Chains","albumId":36,"genreId":4,"dur":1000,"sc":"1286818387"},
@@ -3172,7 +3474,7 @@
         {"id":397,"name":"Impossible","albumId":239,"genreId":1,"dur":null,"sc":"202661220"},
         {"id":398,"name":"Say You Wont Let Go","albumId":239,"genreId":1,"dur":null,"sc":"282789605"},
         {"id":399,"name":"Rewrite the Starts","albumId":239,"genreId":1,"dur":null,"sc":"530968272"},
-        {"id":400,"name":"2001","albumId":240,"genreId":1,"dur":null,"sc":"500579979"},
+        {"id":400,"name":"2002","albumId":334,"genreId":1,"dur":null,"sc":"500579979"},
         {"id":401,"name":"Love the Way You Lie (feat Eminem)","albumId":304,"genreId":1,"dur":null,"sc":"2040089416"},
         {"id":402,"name":"Diamond","albumId":305,"genreId":1,"dur":null,"sc":"p2003424628"},
         {"id":403,"name":"The Monster (feat Eminem)","albumId":306,"genreId":1,"dur":null,"sc":"133859322"},
@@ -3225,7 +3527,7 @@
         {"id":477,"name":"Love Me Like U Do","albumId":284,"genreId":1,"dur":null,"sc":"217488631"},
         {"id":478,"name":"New Rules","albumId":285,"genreId":1,"dur":null,"sc":"332239193"},
         {"id":479,"name":"Dusk Till Dawn (feat SIA)","albumId":286,"genreId":1,"dur":null,"sc":"342297227"},
-        {"id":480,"name":"Let Me Down Slowly","albumId":287,"genreId":1,"dur":null,"sc":"448839399"},
+        {"id":480,"name":"Let Me Down Slowly","albumId":335,"genreId":1,"dur":null,"sc":"448839399"},
         {"id":481,"name":"Into Your Arms (feat Ava Max)","albumId":288,"genreId":1,"dur":null,"sc":"455122884"},
         {"id":482,"name":"Easy On Me","albumId":314,"genreId":1,"dur":null,"sc":"1163403811"},
         {"id":483,"name":"Count On Me","albumId":318,"genreId":1,"dur":null,"sc":"232296024"},
@@ -3237,9 +3539,9 @@
         {"id":489,"name":"Yellow","albumId":293,"genreId":2,"dur":null,"sc":"513864354"},
         {"id":490,"name":"Love Is Gone (Acoustic) (feat Dylan Matthew)","albumId":294,"genreId":1,"dur":null,"sc":"711969466"},
         {"id":491,"name":"Shape Of You","albumId":295,"genreId":1,"dur":null,"sc":"334331910"},
-        {"id":493,"name":"Someone Like U","albumId":312,"genreId":1,"dur":284,"sc":"48491737"},
-        {"id":494,"name":"Dont You Remember","albumId":312,"genreId":1,"dur":284,"sc":"2032844108"},
-        {"id":495,"name":"When We Where Young","albumId":313,"genreId":1,"dur":null,"sc":"250553551"},
+        {"id":493,"name":"Someone Like You","albumId":312,"genreId":1,"dur":284,"sc":"48491737"},
+        {"id":494,"name":"Don't You Remember","albumId":312,"genreId":1,"dur":284,"sc":"2032844108"},
+        {"id":495,"name":"When We Were Young","albumId":313,"genreId":1,"dur":null,"sc":"250553551"},
         {"id":496,"name":"Set Fire to the Rain","albumId":312,"genreId":1,"dur":null,"sc":"42854842"},
         {"id":497,"name":"Hello","albumId":313,"genreId":1,"dur":null,"sc":"244053814"},
         {"id":498,"name":"Billionaire (feat Travie McCoy)","albumId":320,"genreId":1,"dur":210,"sc":"87615115"},
@@ -3250,7 +3552,9 @@
         {"id":515,"name":"Careless Whisper","albumId":325,"genreId":1,"dur":279,"sc":"121699509"},
         {"id":516,"name":"American Idiot","albumId":326,"genreId":5,"dur":173,"sc":"55972876"},
         {"id":517,"name":"Basket Case","albumId":326,"genreId":5,"dur":183,"sc":"33201717"},
-        {"id":518,"name":"21 Guns","albumId":326,"genreId":5,"dur":312,"sc":"55979319"}
+        {"id":518,"name":"21 Guns","albumId":326,"genreId":5,"dur":312,"sc":"55979319"},
+        {"id":572,"name":"Angels Like You","albumId":351,"genreId":1,"dur":197,"sc":"806593702"},
+        {"id":573,"name":"Shape of my Hearts","albumId":352,"genreId":1,"dur":224,"sc":"335856604"}
       ],
       playlists: [
         {"id":4,"name":"Bernadya Full Album","desc":"Bernadya Full Album","artistId":18,"albumId":null,"sc":"1922381408","dur":2400,"songIds":[],"cat":"id"},
@@ -3295,7 +3599,15 @@
         {"id":195,"name":"Chord Overstreet","bio":"Pop","img":"undefined","cat":"int"},
         {"id":196,"name":"Cash-cash","bio":"Pop","img":"undefined","cat":"int"},
         {"id":199,"name":"Green Day","bio":"Punk Rock","img":"undefined","cat":"int"},
-        {"id":200,"name":"Goo-goo Dolls","bio":"Pop Rock","img":"undefined","cat":"int"}
+        {"id":200,"name":"Goo-goo Dolls","bio":"Pop Rock","img":"undefined","cat":"int"},
+        {"id":187,"name":"Adele","bio":"Pop","img":"undefined","cat":"int"},
+        {"id":12,"name":"Ariana Grande","bio":"Pop","img":"https://upload.wikimedia.org/wikipedia/en/8/8d/Ariana_Grande_-The_Best.png","cat":"int"},
+        {"id":201,"name":"Ava Max","bio":"Pop","img":"undefined","cat":"int"},
+        {"id":202,"name":"Alan Walker","bio":"Pop","img":"undefined","cat":"int"},
+        {"id":203,"name":"Akon","bio":"Pop","img":"undefined","cat":"int"},
+        {"id":185,"name":"Alec Benjamin","bio":"Pop","img":"undefined","cat":"int"},
+        {"id":204,"name":"Adam Levine","bio":"Pop","img":"undefined","cat":"int"},
+        {"id":205,"name":"Halsey","bio":"Pop","img":"undefined","cat":"int"}
       ],
       genres: [
         {"id":1,"name":"Pop","color":"#e8115b"},
@@ -3331,12 +3643,36 @@
         {"id":322,"name":"The Twilight Saga: Breaking Dawn – Part 1 (Original Motion Picture Soundtrack)","artistId":188,"year":2011,"colorId":1},
         {"id":323,"name":"Album Belum di Ketahui","artistId":194,"year":null,"colorId":1},
         {"id":326,"name":"Album Belum di Ketahui","artistId":199,"year":null,"colorId":5},
-        {"id":327,"name":"Album Belum di Ketahui","artistId":200,"year":null,"colorId":2}
+        {"id":327,"name":"Album Belum di Ketahui","artistId":200,"year":null,"colorId":2},
+        {"id":336,"name":"Skyfall (Single)","artistId":187,"year":2012,"colorId":1},
+        {"id":313,"name":"25","artistId":187,"year":2015,"colorId":1},
+        {"id":314,"name":"30","artistId":187,"year":2021,"colorId":1},
+        {"id":312,"name":"21","artistId":187,"year":2011,"colorId":1},
+        {"id":22,"name":"My Everything","artistId":12,"year":2014,"colorId":1},
+        {"id":337,"name":"Thank U, Next","artistId":12,"year":2019,"colorId":1},
+        {"id":23,"name":"Dangerous Woman","artistId":12,"year":2016,"colorId":1},
+        {"id":26,"name":"Positions","artistId":12,"year":2020,"colorId":1},
+        {"id":25,"name":"Stuck with U (Single)","artistId":12,"year":2020,"colorId":1},
+        {"id":27,"name":"Eternal Sunshine","artistId":12,"year":2024,"colorId":1},
+        {"id":338,"name":"Heaven & Hell","artistId":201,"year":2020,"colorId":1},
+        {"id":339,"name":"Album Belum di Ketahui","artistId":201,"year":null,"colorId":1},
+        {"id":340,"name":"Different World","artistId":202,"year":2018,"colorId":1},
+        {"id":341,"name":"On My Way (Single)","artistId":202,"year":2019,"colorId":1},
+        {"id":342,"name":"Darkside (Single)","artistId":202,"year":2018,"colorId":1},
+        {"id":343,"name":"Album Belum di Ketahui","artistId":202,"year":null,"colorId":1},
+        {"id":344,"name":"Alone, Pt. II (Single)","artistId":202,"year":2019,"colorId":1},
+        {"id":345,"name":"Trouble","artistId":203,"year":2004,"colorId":1},
+        {"id":346,"name":"Konvicted","artistId":203,"year":2006,"colorId":1},
+        {"id":335,"name":"Narrated for You","artistId":185,"year":2018,"colorId":1},
+        {"id":347,"name":"Begin Again (Soundtrack)","artistId":204,"year":2014,"colorId":1},
+        {"id":348,"name":"What Dreams Are Made Of (R. City)","artistId":204,"year":2015,"colorId":1},
+        {"id":349,"name":"The Papercut Chronicles II (Gym Class Heroes)","artistId":204,"year":2011,"colorId":1},
+        {"id":350,"name":"Album Belum di Ketahui","artistId":205,"year":null,"colorId":1}
       ],
       songs: [
         {"id":492,"name":"Lagu Belum di Ketahui","albumId":72,"genreId":1,"dur":null,"yt":"3EyYbfZWkDo"},
         {"id":500,"name":"Complicated","albumId":315,"genreId":2,"dur":243,"yt":"5eGbnVlRcRg"},
-        {"id":501,"name":"I'm With U","albumId":315,"genreId":2,"dur":null,"yt":"o4PDqRFAIUE"},
+        {"id":501,"name":"I'm with You","albumId":315,"genreId":2,"dur":null,"yt":"o4PDqRFAIUE"},
         {"id":502,"name":"It Will Rain","albumId":322,"genreId":1,"dur":null,"yt":"neVe5CIe1Xg"},
         {"id":503,"name":"24K Magic","albumId":319,"genreId":1,"dur":null,"yt":"LhZ5GXCZtEw"},
         {"id":504,"name":"That 's What I Like","albumId":319,"genreId":1,"dur":207,"yt":"byO2xBvWXXI"},
@@ -3356,7 +3692,50 @@
         {"id":525,"name":"Holiday","albumId":326,"genreId":5,"dur":232,"yt":"jdYuGFYYm0s"},
         {"id":526,"name":"Wake Me Up When September Ends","albumId":326,"genreId":5,"dur":284,"yt":"O9RIMURCBQw"},
         {"id":527,"name":"Good Riddance","albumId":326,"genreId":5,"dur":154,"yt":"fhrK0i-2Nes"},
-        {"id":528,"name":"Jesus of Suburbia","albumId":326,"genreId":5,"dur":568,"yt":"4DrwrpDXnts"}
+        {"id":528,"name":"Jesus of Suburbia","albumId":326,"genreId":5,"dur":568,"yt":"4DrwrpDXnts"},
+        {"id":529,"name":"Skyfall","albumId":336,"genreId":1,"dur":284,"yt":"-q6gUoJgZCM"},
+        {"id":530,"name":"Love in the Dark","albumId":313,"genreId":1,"dur":309,"yt":"L4wxMngrHis"},
+        {"id":531,"name":"Easy on Me","albumId":314,"genreId":1,"dur":224,"yt":"YuxJ5a6Cg_k"},
+        {"id":532,"name":"Someone Like You","albumId":312,"genreId":1,"dur":289,"yt":"z7GCiVTlv04"},
+        {"id":533,"name":"Set Fire to the Rain","albumId":312,"genreId":1,"dur":255,"yt":"qOagQWjKpyM"},
+        {"id":534,"name":"When We Were Young","albumId":313,"genreId":1,"dur":298,"yt":"BlaQpxFRhs4"},
+        {"id":535,"name":"Hello","albumId":313,"genreId":1,"dur":299,"yt":"JnyNoIUsAdQ"},
+        {"id":536,"name":"Don't You Remember","albumId":312,"genreId":1,"dur":248,"yt":"jZdtN0nCTFU"},
+        {"id":537,"name":"Problem (feat. Iggy Azalea)","albumId":22,"genreId":1,"dur":200,"yt":"3Pt94HFnHk0"},
+        {"id":538,"name":"7 Rings","albumId":337,"genreId":1,"dur":178,"yt":"uDAjINEp8H8"},
+        {"id":539,"name":"Side to Side (feat. Nicki Minaj)","albumId":23,"genreId":1,"dur":226,"yt":"xVXB9Kw5Fkk"},
+        {"id":540,"name":"Love Me Harder (with The Weeknd)","albumId":22,"genreId":1,"dur":233,"yt":"rj0tLcutBZQ"},
+        {"id":541,"name":"Positions","albumId":26,"genreId":1,"dur":171,"yt":"swYMG7X1iDQ"},
+        {"id":542,"name":"One Last Time","albumId":22,"genreId":1,"dur":198,"yt":"Wg92RrNhB8s"},
+        {"id":543,"name":"Bloodline","albumId":337,"genreId":1,"dur":211,"yt":"2ze-1eYy5-g"},
+        {"id":544,"name":"Stuck with U (with Justin Bieber)","albumId":25,"genreId":1,"dur":229,"yt":"h2jvHynuMjI"},
+        {"id":545,"name":"We Can't Be Friends (Wait for Your Love)","albumId":27,"genreId":1,"dur":226,"yt":"bMBzYUHUbUY"},
+        {"id":546,"name":"Supernatural","albumId":27,"genreId":1,"dur":163,"yt":"DaRVI56Ep2c"},
+        {"id":547,"name":"Kings & Queens","albumId":338,"genreId":1,"dur":160,"yt":"q6LhCim5y_Y"},
+        {"id":548,"name":"Sweet but Psycho","albumId":338,"genreId":1,"dur":187,"yt":"Ot_sMK4rVqs"},
+        {"id":549,"name":"Not Your Barbie Girl","albumId":338,"genreId":1,"dur":186,"yt":"mgjt9734xLk"},
+        {"id":550,"name":"Into Your Arms","albumId":339,"genreId":1,"dur":140,"yt":"Gwg_KYNgu6Y"},
+        {"id":551,"name":"Forever Young","albumId":339,"genreId":1,"dur":227,"yt":"-ym0I1D8PfA"},
+        {"id":552,"name":"Diamond Heart (feat. Sophia Somajo)","albumId":340,"genreId":1,"dur":240,"yt":"c9R9VsK54ZQ"},
+        {"id":553,"name":"Lily (with K-391 & Emelie Hollow)","albumId":340,"genreId":1,"dur":195,"yt":"ox4tmEV6-QU"},
+        {"id":554,"name":"Ignite (with K-391)","albumId":340,"genreId":1,"dur":207,"yt":"zrwTYozyzYA"},
+        {"id":555,"name":"On My Way (with Sabrina Carpenter & Farruko)","albumId":341,"genreId":1,"dur":193,"yt":"fm-nXA-K0Dg"},
+        {"id":556,"name":"Darkside (feat. Au/Ra & Tomine Harket)","albumId":342,"genreId":1,"dur":211,"yt":"sdAOoB5ML0Q"},
+        {"id":557,"name":"The Spectre","albumId":340,"genreId":1,"dur":190,"yt":"qHDJSRlNhVs"},
+        {"id":558,"name":"Alone","albumId":340,"genreId":1,"dur":160,"yt":"bPs0xFd4skY"},
+        {"id":559,"name":"Faded","albumId":340,"genreId":1,"dur":212,"yt":"qdpXxGPqW-Y"},
+        {"id":560,"name":"Play (with K-391)","albumId":340,"genreId":1,"dur":null,"yt":"yDk7k06-E4w"},
+        {"id":561,"name":"Not You","albumId":343,"genreId":1,"dur":150,"yt":"vlXUFHigKkc"},
+        {"id":562,"name":"Different World","albumId":340,"genreId":1,"dur":203,"yt":"6ow6MueyJOQ"},
+        {"id":563,"name":"Alone, Pt. II (with Ava Max)","albumId":344,"genreId":1,"dur":177,"yt":"GPvBmcoriNo"},
+        {"id":564,"name":"Strongest","albumId":343,"genreId":1,"dur":210,"yt":"qOW9l6m0FLY"},
+        {"id":565,"name":"Lonely","albumId":345,"genreId":1,"dur":236,"yt":"JISlh7et1w4"},
+        {"id":566,"name":"Don't Matter","albumId":346,"genreId":1,"dur":295,"yt":"54CDvtjLles"},
+        {"id":567,"name":"Let Me Down Slowly","albumId":335,"genreId":1,"dur":169,"yt":"jLNrvmXboj8"},
+        {"id":568,"name":"Lost Stars","albumId":347,"genreId":1,"dur":269,"yt":"Ig2uzAPzCrY"},
+        {"id":569,"name":"Locked Away (R. City feat. Adam Levine)","albumId":348,"genreId":1,"dur":226,"yt":"Fdcw4Mby2RI"},
+        {"id":570,"name":"Stereo Hearts (Gym Class Heroes feat. Adam Levine)","albumId":349,"genreId":1,"dur":215,"yt":"_U0PrwLpb_Q"},
+        {"id":571,"name":"Whitout Me","albumId":350,"genreId":1,"dur":203,"yt":"rQH8vrOBrPs"}
       ],
       playlists: [
 
@@ -4245,6 +4624,11 @@
         return this.#position.get(songId) ?? -1;
       }
 
+      /** Apakah antrean ini dibuat dari daftar `songs` yang sama (isi dan urutan)? */
+      hasSource(songs) {
+        return this.#source.length === songs.length && this.#source.every((song, i) => song === songs[i]);
+      }
+
       isCurrent(songId) {
         return this.current?.id === songId;
       }
@@ -4276,6 +4660,27 @@
           if (song.isPlayable) out.push(song);
         }
         return out;
+      }
+
+      /**
+       * Mengatur ulang urutan lagu berikutnya. `ids` = urutan baru dari lagu-lagu yang tampil di Up next.
+       * Lagu-lagu itu hanya bertukar tempat di slot yang sudah mereka tempati, jadi lagu aktif dan lagu lain tidak bergeser.
+       */
+      reorderUpcoming(ids) {
+        const n = this.#order.length;
+        const wanted = new Set(ids);
+        const slots = [];
+        const picked = new Map();
+        for (let step = 1; step < n; step++) {
+          const index = (this.#cursor + step) % n;
+          const song = this.#order[index];
+          if (wanted.has(song.id)) { slots.push(index); picked.set(song.id, song); }
+        }
+        if (slots.length !== ids.length || picked.size !== ids.length) return false;
+        ids.forEach((id, k) => { this.#order[slots[k]] = picked.get(id); });
+        if (!this.#shuffled) this.#source = [...this.#order];
+        this.#position = new Map(this.#order.map((song, index) => [song.id, index]));
+        return true;
       }
 
       #rebuildOrder() {
@@ -4577,7 +4982,10 @@
       get volume() { return this.#volume; }
 
       /** Lagu-lagu berikutnya di antrean aktif (untuk daftar Up next). */
-      get upNext() { return this.queue.upcoming(12); }
+      get upNext() { return this.queue.upcoming(100); }
+
+      /** Mengubah urutan lagu berikutnya (geser di Up next); urutan putar otomatis mengikuti. */
+      reorderUpNext(ids) { return this.queue.reorderUpcoming(ids); }
 
       /** Memutar lagu yang sudah ada di antrean aktif tanpa mengganti antreannya (klik di Up next). */
       playQueued(songId) {
@@ -4638,6 +5046,19 @@
         const list = current && !favoriteSongs.includes(current) ? [current, ...favoriteSongs] : favoriteSongs;
         this.queue.load(list, current ? current.id : null);
         this.#persist();
+      }
+
+      /**
+       * Lagu yang sedang aktif diklik lagi dari daftar lain (mis. hasil pencarian): antrean ikut daftar itu
+       * (Next/Previous berputar di dalamnya) tanpa menghentikan atau memuat ulang lagu.
+       */
+      rebindQueue(songs, tag = null) {
+        const current = this.queue.current;
+        if (!current || !songs.includes(current) || this.queue.hasSource(songs)) return;
+        this.#queueTag = tag;
+        this.queue.load(songs, current.id);
+        this.#persist();
+        this.#emitState();
       }
 
       toggle() {
@@ -5116,6 +5537,31 @@
       return { list, offset, bar: info + Pager(current, total) };
     }
 
+    /**
+     * Rotasi alfabet (versi Videos, halaman Indonesian/International Songs): kelompok lagu menurut huruf awal nama artis
+     * digeser melingkar sehingga huruf ke-`step` (A, B, C, ... lalu kembali ke A) berada di paling atas.
+     * Hanya posisi kelompok yang berubah: urutan di dalam kelompok tetap, tidak ada lagu yang hilang atau ganda.
+     * Artis berawalan angka/simbol ('#') berada di antara Z dan A. Huruf yang tidak punya lagu dilewati.
+     */
+    const AlphaRotation = { step: 0 };
+    const artistLetter = (song) => {
+      const first = String(song.artist.name).trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').charAt(0).toUpperCase();
+      return first >= 'A' && first <= 'Z' ? first : '#';
+    };
+    function rotateByArtistLetter(songs, step) {
+      const groups = new Map();
+      for (const song of songs) {
+        const key = artistLetter(song);
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(song);
+      }
+      const letters = [...groups.keys()].filter((key) => key !== '#').sort();
+      if (letters.length < 2) return songs;
+      const at = step % letters.length;
+      const order = [...letters.slice(at), ...(groups.has('#') ? ['#'] : []), ...letters.slice(0, at)];
+      return order.flatMap((key) => groups.get(key));
+    }
+
     const EmptyResult = () => `<p style="color:var(--muted)">${MESSAGES.NO_RESULTS}</p>`;
 
     /* ################ VIEWS        ################ */
@@ -5188,7 +5634,8 @@
       render({ page }) {
         /* 50 lagu per halaman (urut nama artis lalu judul); antrean putar = seluruh lagu kategori ini. */
         const { label } = CATEGORIES[this.category];
-        const songs = this.library.songsOfCategory(this.category);
+        const sorted = this.library.songsOfCategory(this.category);
+        const songs = isVideoMode() ? rotateByArtistLetter(sorted, AlphaRotation.step) : sorted;
         if (!songs.length) return BaseView.page(SectionTitle(label) + `<p style="color:var(--muted)">${MESSAGES.NO_SONGS}</p>`, songs);
         const { list, offset, bar } = paginate(songs, page, 'lagu');
         return BaseView.page(SectionTitle(label) + TrackList(list, offset) + bar, songs);
@@ -5540,7 +5987,7 @@
 
       bind() {
         this.el = {
-          title: this.$('#thTitle'), meta: this.$('#thMeta'), fav: this.$('#thFav'), next: this.$('#thNext'),
+          title: this.$('#thTitle'), artist: this.$('#thArtist'), meta: this.$('#thMeta'), cover: this.$('#thCover'), side: this.$('#thSide'), dur: this.$('#thDur'), fav: this.$('#thFav'), play: this.$('#thPlay'), share: this.$('#thShare'), next: this.$('#thNext'),
           stage: this.$('.theater-stage'), poster: this.$('#thPoster'), posterImg: this.$('#thPoster img'),
           back: this.$('#thBack'), open: this.$('#thOpen'), close: this.$('#thClose'),
         };
@@ -5548,12 +5995,22 @@
           if (this.router.canGoBack) history.back();
           else this.router.navigate('home', { replace: true });
         });
-        this.listen(this.el.poster, 'click', () => {
-          if (this.#watchId !== null) this.player.playFrom(this.catalog.library.allSongs, this.#watchId);
-        });
         this.listen(this.el.fav, 'click', () => {
           const song = this.#infoSong();
           if (song) this.favorites.toggle(song);
+        });
+        this.listen(this.el.play, 'click', () => {
+          const song = this.#infoSong();
+          if (!song) return;
+          if (this.player.isCurrent(song.id)) this.player.toggle();
+          else this.player.playFrom(this.catalog.library.allSongs, song.id);
+        });
+        this.listen(this.el.share, 'click', () => {
+          const song = this.#infoSong();
+          if (song) this.#shareLink(song);
+        });
+        this.listen(this.el.poster, 'click', () => {
+          if (this.#watchId !== null) this.player.playFrom(this.catalog.library.allSongs, this.#watchId);
         });
         this.listen(this.el.open, 'click', () => {
           const song = this.player.currentSong;
@@ -5563,13 +6020,27 @@
           if (this.player.state.playing) this.player.toggle();
           this.root.classList.remove('show', 'mini');
         });
+        this.listen(this.el.next, 'pointerdown', (event) => {
+          const handle = event.target.closest('[data-next-drag]');
+          if (handle) this.#startDrag(event, handle);
+        });
+        this.listen(this.el.next, 'keydown', (event) => {
+          const handle = event.target.closest('[data-next-drag]');
+          if (!handle || (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')) return;
+          event.preventDefault();
+          const ids = [...this.el.next.querySelectorAll('.next-item[data-next]')].map((el) => Number(el.dataset.next));
+          const id = Number(handle.dataset.nextDrag);
+          const from = ids.indexOf(id);
+          const to = from + (event.key === 'ArrowUp' ? -1 : 1);
+          if (from === -1 || to < 0 || to >= ids.length) return;
+          ids.splice(to, 0, ids.splice(from, 1)[0]);
+          if (this.player.reorderUpNext(ids)) this.#refresh();
+          this.el.next.querySelector(`[data-next-drag="${id}"]`)?.focus();
+        });
         this.listen(this.el.next, 'click', (event) => {
+          if (event.target.closest('[data-next-drag]')) return;
           const item = event.target.closest('[data-next]');
-          if (!item) return;
-          const id = Number(item.dataset.next);
-          const library = this.catalog.library;
-          if (this.#watchId !== null && this.player.isCurrent(this.#watchId) && this.player.queue.indexOf(id) !== -1) this.player.playQueued(id);
-          else this.player.playFrom(library.allSongs, id);
+          if (item) this.#playItem(Number(item.dataset.next));
         });
         if ('IntersectionObserver' in window) {
           this.#observer = new IntersectionObserver(([entry]) => {
@@ -5603,6 +6074,10 @@
           this.#refresh();
         });
         this.subscribe(this.bus, Events.FAVORITES_CHANGE, () => this.#refresh());
+        this.subscribe(this.bus, Events.PLAYER_DURATION, ({ song, seconds }) => {
+          if (this.#infoSong()?.id === song.id) this.el.dur.textContent = formatClock(seconds);
+          this.el.next.querySelectorAll(`[data-dur="${song.id}"]`).forEach((cell) => { cell.textContent = formatClock(seconds); });
+        });
         this.#refresh();
       }
 
@@ -5632,8 +6107,11 @@
         const watchSong = this.#watchSong();
         const song = this.#infoSong();
         this.el.title.textContent = song ? song.name : '';
-        this.el.meta.textContent = song ? `${song.artist.name} · ${song.album.name}` : '';
-        this.#showFavorite(song);
+        this.el.title.title = song ? song.name : '';
+        this.el.artist.textContent = song ? song.artist.name : '';
+        this.el.meta.textContent = song ? song.album.name : '';
+        this.#showCover(song);
+        this.#showSide(song);
 
         const poster = Boolean(watchSong) && this.player.state.activeId !== watchSong.id;
         this.root.classList.toggle('poster', poster);
@@ -5642,14 +6120,38 @@
         this.#showNext(watchSong, poster);
       }
 
-      #showFavorite(song) {
-        const on = Boolean(song) && this.favorites.has(song);
-        this.el.fav.classList.toggle('on', on);
-        this.el.fav.disabled = !song;
-        this.el.fav.querySelector('i').className = `fa-${on ? 'solid' : 'regular'} fa-heart`;
-        const label = on ? 'Hapus dari Favorites' : 'Tambah ke Favorites';
-        this.el.fav.setAttribute('aria-label', label);
-        this.el.fav.title = label;
+      /** Kolom kanan info musik: durasi dari data lagu, status Love, dan ikon Play/Pause. */
+      #showSide(song) {
+        this.el.side.hidden = !song;
+        if (!song) return;
+        this.el.dur.textContent = formatClock(song.duration);
+        const fav = this.favorites.has(song);
+        const favLabel = fav ? 'Hapus dari Favorites' : 'Tambah ke Favorites';
+        this.el.fav.classList.toggle('on', fav);
+        this.el.fav.setAttribute('aria-pressed', String(fav));
+        this.el.fav.setAttribute('aria-label', favLabel);
+        this.el.fav.title = favLabel;
+        this.el.fav.querySelector('i').className = `fa-${fav ? 'solid' : 'regular'} fa-heart`;
+        const playing = Boolean(this.player.state.playing) && this.player.isCurrent(song.id);
+        const playLabel = playing ? 'Jeda' : 'Putar';
+        this.el.play.classList.toggle('on', playing);
+        this.el.play.setAttribute('aria-label', playLabel);
+        this.el.play.title = playLabel;
+        this.el.play.querySelector('i').className = `fa-solid fa-${playing ? 'pause' : 'play'}`;
+      }
+
+      /** Cover album (bulat) milik lagu yang sedang ditampilkan; cadangan: placeholder berwarna sesuai album. */
+      #showCover(song) {
+        const img = this.el.cover;
+        img.hidden = !song;
+        if (!song) return;
+        const fallback = colorfulPlaceholder(song.album.colorId);
+        const src = song.album.img;
+        if (img.dataset.songId === String(song.id)) return;
+        img.dataset.songId = String(song.id);
+        img.onerror = () => { img.onerror = null; img.src = fallback; };
+        img.src = src;
+        img.alt = `Cover album ${song.album.name}`;
       }
 
       #showPoster(song) {
@@ -5661,6 +6163,88 @@
         img.src = song.youTubeId ? `https://i.ytimg.com/vi/${song.youTubeId}/maxresdefault.jpg` : fallback;
       }
 
+      /** Geser (mouse / sentuh) pegangan di sebuah item Up next untuk mengubah urutan lagu berikutnya. */
+      #startDrag(event, handle) {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        const items = [...this.el.next.querySelectorAll('.next-item[data-next]')];
+        const dragged = handle.closest('.next-item');
+        const from = items.indexOf(dragged);
+        if (from === -1) return;
+        event.preventDefault();
+        handle.setPointerCapture?.(event.pointerId);
+        const rects = items.map((el) => el.getBoundingClientRect());
+        const height = rects[from].height;
+        const startY = event.clientY;
+        let target = from;
+        dragged.classList.add('dragging');
+        this.el.next.classList.add('is-dragging');
+
+        const move = (e) => {
+          const dy = e.clientY - startY;
+          dragged.style.transform = `translateY(${dy}px)`;
+          const center = rects[from].top + height / 2 + dy;
+          target = from;
+          for (let i = 0; i < items.length; i++) {
+            const mid = rects[i].top + rects[i].height / 2;
+            if (i < from && center < mid) { target = i; break; }
+            if (i > from && center > mid) target = i;
+          }
+          items.forEach((el, i) => {
+            if (i === from) return;
+            const shift = from < target && i > from && i <= target ? -height : from > target && i >= target && i < from ? height : 0;
+            el.style.transform = shift ? `translateY(${shift}px)` : '';
+          });
+        };
+        const finish = (e) => {
+          handle.removeEventListener('pointermove', move);
+          handle.removeEventListener('pointerup', finish);
+          handle.removeEventListener('pointercancel', finish);
+          handle.releasePointerCapture?.(e.pointerId);
+          items.forEach((el) => { el.style.transform = ''; el.classList.remove('dragging'); });
+          this.el.next.classList.remove('is-dragging');
+          if (e.type === 'pointercancel' || target === from) return;
+          const ids = items.map((el) => Number(el.dataset.next));
+          ids.splice(target, 0, ids.splice(from, 1)[0]);
+          if (this.player.reorderUpNext(ids)) this.#refresh();
+        };
+        handle.addEventListener('pointermove', move);
+        handle.addEventListener('pointerup', finish);
+        handle.addEventListener('pointercancel', finish);
+      }
+
+      /** Memutar video dari daftar Up next (logika sama seperti klik pada barisnya). */
+      #playItem(id) {
+        const library = this.catalog.library;
+        if (this.#watchId !== null && this.player.isCurrent(this.#watchId) && this.player.queue.indexOf(id) !== -1) this.player.playQueued(id);
+        else this.player.playFrom(library.allSongs, id);
+      }
+
+      /** Tautan halaman tontonan sebuah video (format sama dengan URL router versi Videos). */
+      #linkOf(song) {
+        const hash = Route.parse(`watch:${song.id}`).toHash();
+        return `${location.origin}${location.pathname}${location.search}#/lyric/${hash.slice(2)}`;
+      }
+
+      /** Membagikan link video: lembar bagikan bawaan perangkat bila ada, kalau tidak link disalin ke clipboard. */
+      async #shareLink(song) {
+        const url = this.#linkOf(song);
+        const title = `${song.name} - ${song.artist.name}`;
+        if (navigator.share) {
+          try { await navigator.share({ title, url }); return; } catch (error) { if (error?.name === 'AbortError') return; }
+        }
+        let copied = false;
+        try { await navigator.clipboard.writeText(url); copied = true; } catch {
+          const box = document.createElement('textarea');
+          box.value = url;
+          box.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+          document.body.appendChild(box);
+          box.select();
+          try { copied = document.execCommand('copy'); } catch { /* abaikan */ }
+          box.remove();
+        }
+        this.bus.emit(Events.TOAST, copied ? 'Link video disalin' : url);
+      }
+
       /** Up next: antrean aktif; bila video halaman ini belum diputar, urutan koleksi setelah video ini. */
       #showNext(watchSong, poster) {
         if (!watchSong) return;
@@ -5668,17 +6252,30 @@
         if (poster) {
           const playable = this.catalog.library.allSongs.filter((item) => item.isPlayable);
           const at = playable.findIndex((item) => item.id === watchSong.id);
-          songs = at === -1 ? playable.slice(0, 12) : [...playable.slice(at + 1), ...playable.slice(0, at)].slice(0, 12);
+          songs = at === -1 ? playable.slice(0, 100) : [...playable.slice(at + 1), ...playable.slice(0, at)].slice(0, 100);
         } else songs = this.player.upNext;
-        const signature = songs.map((item) => item.id).join(',');
+        const signature = `${poster ? 'p' : 'q'}:${songs.map((item) => item.id).join(',')}`;
         if (signature === this.#signature) return;
         this.#signature = signature;
+
+        /* Mengubah urutan hanya bermakna untuk antrean yang sedang berjalan; sebelum video diputar daftar ini belum menjadi antrean. */
+        const dragBtn = (item) => poster ? '' :
+          `<button class="next-drag" type="button" data-next-drag="${item.id}" ` +
+          `aria-label="Geser untuk mengubah urutan: ${e(item.name)}" title="Geser untuk mengubah urutan (atau tombol panah atas/bawah)"><i class="next-drag-lines" aria-hidden="true"></i></button>`;
+        const row = (item) => {
+          const fallback = colorfulPlaceholder(item.album.colorId);
+          const year = item.album.year;
+          const album = `${item.album.name}${year ? ` · ${year}` : ''}`;
+          return `<div class="next-item" data-next="${item.id}">` +
+            `<div class="next-thumb-box"><img class="next-thumb" ${IMG_ATTRS} loading="lazy" src="${e(item.thumb ?? fallback)}" alt="">` +
+            '<span class="next-play" aria-hidden="true"><i class="fa-solid fa-play"></i></span></div>' +
+            `<div class="next-text"><div class="next-title" title="${e(item.name)}">${e(item.name)}</div>` +
+            `<div class="next-sub">${e(item.artist.name)}</div>` +
+            `<div class="next-album" title="${e(album)}">${e(album)}</div></div>` +
+            `<div class="next-side">${dragBtn(item)}<span class="next-dur" data-dur="${item.id}">${formatClock(item.duration)}</span></div></div>`;
+        };
         this.el.next.innerHTML = songs.length
-          ? songs.map((item) =>
-            `<div class="next-item" data-next="${item.id}"><img class="next-thumb" ${IMG_ATTRS} loading="lazy" ` +
-            `src="${e(item.thumb ?? colorfulPlaceholder(item.album.colorId))}" alt="">` +
-            `<div class="next-text"><div class="next-title">${e(item.name)}</div>` +
-            `<div class="next-sub">${e(item.artist.name)}</div></div></div>`).join('')
+          ? songs.map(row).join('')
           : '<p class="next-empty">Belum ada video berikutnya.</p>';
       }
     }
@@ -5717,6 +6314,8 @@
       #songs = [];
       #route = null;
       #refreshTimer = null;
+      #rotateTimer = null;
+      #ptr = null;
 
       constructor(root, { catalog, router, player, bus, favorites }) {
         super(root);
@@ -5736,6 +6335,8 @@
       bind() {
         this.listen(this.container, 'click', (event) => this.#onClick(event));
         this.#bindSwipe();
+        this.#rotateTimer = setInterval(() => this.#rotateAlphabet(), TIMING.ALPHA_ROTATE_MS);
+        this.#bindPullToRefresh();
         this.subscribe(this.bus, Events.ROUTE_CHANGE, ({ route }) => this.show(route));
         this.subscribe(this.bus, Events.PLAYER_STATE, (state) => this.#syncPlayback(state));
         this.subscribe(this.bus, Events.FAVORITES_CHANGE, () => {
@@ -5804,6 +6405,99 @@
         this.#syncPlayback(this.player.state);
       }
 
+      unmount() {
+        clearInterval(this.#rotateTimer);
+        this.#ptr?.remove();
+        super.unmount();
+      }
+
+      /**
+       * Tarik dari paling atas halaman (layar sentuh) lalu lepas: indikator berputar dan web dimuat ulang.
+       * Dibuat sendiri karena area gulir ada di dalam <main> (body overflow: hidden), sehingga tarik-untuk-muat-ulang
+       * bawaan browser tidak berjalan. Tidak aktif di halaman tontonan, daftar yang bisa digulir, dan pegangan geser.
+       */
+      #bindPullToRefresh() {
+        const THRESHOLD = 64;
+        const indicator = document.createElement('div');
+        indicator.className = 'ptr';
+        indicator.setAttribute('aria-hidden', 'true');
+        indicator.innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
+        document.body.appendChild(indicator);
+        this.#ptr = indicator;
+        const icon = indicator.firstElementChild;
+
+        let startX = null;
+        let startY = null;
+        let pull = 0;
+        let busy = false;
+
+        const show = (px) => {
+          indicator.style.transform = `translate(-50%, ${px - 52}px)`;
+          indicator.style.opacity = String(Math.min(1, px / THRESHOLD));
+          icon.style.transform = `rotate(${px * 4}deg)`;
+        };
+        const hide = () => {
+          indicator.classList.remove('pulling');
+          indicator.style.transform = '';
+          indicator.style.opacity = '';
+          icon.style.transform = '';
+        };
+
+        this.listen(this.root, 'touchstart', (event) => {
+          startY = null;
+          if (busy || event.touches.length !== 1 || this.root.scrollTop > 0) return;
+          if (event.target.closest('.theater.watching, .next-drag, .pager, input, textarea')) return;
+          startX = event.touches[0].clientX;
+          startY = event.touches[0].clientY;
+          pull = 0;
+        }, { passive: true });
+
+        this.listen(this.root, 'touchmove', (event) => {
+          if (startY === null) return;
+          const touch = event.touches[0];
+          const dy = touch.clientY - startY;
+          if (this.root.scrollTop > 0 || dy <= 0 || Math.abs(touch.clientX - startX) > dy) {
+            pull = 0;
+            hide();
+            return;
+          }
+          pull = Math.min(dy * 0.5, 90);
+          indicator.classList.add('pulling');
+          show(pull);
+        }, { passive: true });
+
+        const release = () => {
+          if (startY === null) return;
+          startY = null;
+          if (pull >= THRESHOLD) {
+            busy = true;
+            hide();
+            indicator.classList.add('loading');
+            setTimeout(() => location.reload(), 400);
+          } else hide();
+          pull = 0;
+        };
+        this.listen(this.root, 'touchend', release, { passive: true });
+        this.listen(this.root, 'touchcancel', release, { passive: true });
+      }
+
+      /**
+       * Versi Videos: tiap interval, urutan kelompok artis di Indonesian/International Songs bergeser satu huruf.
+       * Daftar digambar ulang di tempat (posisi gulir dan halaman pagination tetap); halaman lain tidak disentuh.
+       */
+      #rotateAlphabet() {
+        if (document.hidden || !isVideoMode()) return;
+        AlphaRotation.step += 1;
+        const view = this.#route?.view;
+        if (view !== 'songs-id' && view !== 'songs-int') return;
+        const top = this.root.scrollTop;
+        const { html, songs } = this.views.get(view).render(this.#route);
+        this.container.innerHTML = html;
+        this.#songs = songs;
+        this.root.scrollTo({ top, behavior: 'instant' });
+        this.#syncPlayback(this.player.state);
+      }
+
       /** Daftar Favorites digambar ulang di tempat (tanpa lompat ke atas) saat ada lagu ditambah/dihapus. */
       #refreshFavorites() {
         if (this.#route?.view !== 'favorites') return;
@@ -5833,8 +6527,10 @@
         if (!playTarget) return;
         const songId = Number(playTarget.dataset.play);
         if (isVideoMode()) return this.#openVideo(songId);
-        if (this.player.isCurrent(songId)) this.player.toggle();
-        else this.player.playFrom(this.#songs, songId, this.#route?.view === 'favorites' ? 'favorites' : null);
+        if (this.player.isCurrent(songId)) {
+          if (this.#route?.isSearch) this.player.rebindQueue(this.#songs);
+          this.player.toggle();
+        } else this.player.playFrom(this.#songs, songId, this.#route?.view === 'favorites' ? 'favorites' : null);
       }
 
       /**
@@ -5845,7 +6541,7 @@
         const song = this.catalog.library.getSong(songId);
         if (!this.player.isCurrent(songId)) {
           this.player.playFrom(this.#songs, songId, this.#route?.view === 'favorites' ? 'favorites' : null);
-        }
+        } else if (this.#route?.isSearch) this.player.rebindQueue(this.#songs);
         if (song?.isPlayable && this.#route?.view !== 'watch') this.router.navigate(`watch:${songId}`);
       }
 
