@@ -104,7 +104,6 @@
   @media (hover: hover) { .back:hover { background: var(--surface-2); } }
   .theater-back { @apply absolute top-2 left-2 z-4 size-9 justify-center rounded-full bg-black/60 p-0 text-white text-[0px]; margin: 0; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
   .theater-back i { font-size: 15px; }
-  .theater.watching .theater-back { display: none; }
 
   /* ---------------- Chip filter, indeks A-Z ---------------- */
   :root { --nav-h: 58px; --nav-bar-h: calc(var(--safe-t) + 59px); }
@@ -405,7 +404,6 @@
     .c-al { display: block; padding-right: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); font-size: 14px; }
     .row .c-t { padding: 0 12px 0 0; text-align: right; }
     @media (hover: hover) { .row:not(.head):hover { background: var(--surface); } .row:not(.head):hover .n b { display: none; } .row:not(.head):hover .n i { display: block; color: var(--accent); } .c-al[data-go]:hover { color: var(--accent); text-decoration: underline; } }
-    .theater.watching .theater-back { display: inline-flex; }
     .theater.watching { inset: var(--top-h) 0 0 var(--side-w); grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; padding: 0 32px 32px 0; }
     .theater-info { gap: 16px; padding: 20px 0 0 32px; }
     .theater-cover { width: 64px; }
@@ -4539,7 +4537,7 @@
     }
 
     /* ---- components/Navbar.js ---- */
-    /** Bilah atas: logo bulat (klik = pindah Songs / Videos; di halaman tontonan ponsel = kembali) dan pencarian. Komponen induk dari SearchBar. */
+    /** Bilah atas: logo bulat (klik = pindah Songs / Videos) dan pencarian. Komponen induk dari SearchBar. */
     class Navbar extends Component {
       constructor(root, { router, bus }) {
         super(root);
@@ -4554,17 +4552,9 @@
           '<div class="nav-right"></div>';
       }
 
-      #backMode = false;
-
-      /** Ikon dan keterangan logo menunjukkan versi aktif, dan versi tujuan bila diklik. Di halaman tontonan (ponsel) logo menjadi tombol kembali. */
+      /** Ikon dan keterangan logo menunjukkan versi aktif, dan versi tujuan bila diklik. */
       #syncLogo() {
         const button = this.$('#modeToggle');
-        if (this.#backMode) {
-          button.querySelector('i').className = 'fa-solid fa-arrow-left';
-          button.title = 'Kembali';
-          button.setAttribute('aria-label', 'Kembali');
-          return;
-        }
         const current = MODES[this.router.mode];
         const target = MODES[this.router.mode === 'music' ? 'lyric' : 'music'];
         button.querySelector('i').className = `fa-solid ${current.icon}`;
@@ -4577,7 +4567,6 @@
         const button = this.$('#modeToggle');
         const icon = button.querySelector('.logo-icon');
         this.listen(button, 'click', () => {
-          if (this.#backMode) return this.router.back();
           icon.classList.remove('spin');
           void icon.offsetWidth; /* mulai ulang animasi */
           icon.classList.add('spin');
@@ -4598,11 +4587,6 @@
        * Hasil pencarian tidak memindahkan apa pun, supaya kolom pencarian tidak kehilangan fokus saat mengetik.
        */
       #place(route) {
-        const backMode = this.#phone.matches && isVideoMode() && route.view === 'watch';
-        if (backMode !== this.#backMode) {
-          this.#backMode = backMode;
-          this.#syncLogo();
-        }
         if (route.isSearch) return;
         const main = byId('main');
         const app = this.root.closest('.app') ?? main.parentElement;
