@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Web Music · Untuk Kamu</title>
+  <!-- Content-Security-Policy: hanya origin yang dipakai aplikasi (SoundCloud, YouTube, Font Awesome, Google Fonts).
+       'unsafe-inline' diperlukan untuk skrip inline (kelas skeleton, fallback preload) + modul utama, atribut style, dan atribut onload pada <link> di bawah;
+       saat di-hosting sebaiknya diganti header HTTP dengan nonce/hash. Bila ada fitur yang tiba-tiba tidak jalan,
+       hapus meta ini lalu cek Console. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://w.soundcloud.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://w.soundcloud.com https://www.youtube-nocookie.com https://www.youtube.com; connect-src 'self' https://*.soundcloud.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="theme-color" content="#fdf3f6">
+  <noscript><style>.sk-boot { display: none !important; }</style></noscript>
+
+  <!-- Resource hints: sambungan awal ke origin yang pasti dipakai (CSS font/ikon), DNS saja untuk yang dipakai belakangan. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="dns-prefetch" href="https://w.soundcloud.com">
+  <!-- Thumbnail video (i.ytimg.com) dipakai di Beranda, daftar Video, dan poster halaman pemutaran: koneksi dibuka lebih awal. -->
+  <link rel="preconnect" href="https://i.ytimg.com">
+  <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
+
+  <!-- Skrip boot (sinkron, kecil): tidak butuh <body>; hanya menandai <html> dan menyiapkan teks bisikan. -->
+  <script src="js/boot/preconnect-video.js"></script>
+  <script src="js/boot/whisper-texts.js"></script>
+  <script src="js/boot/boot-skeleton-class.js"></script>
+
+  <!-- Font & ikon: dimuat tanpa memblokir render (preload lalu dipasang sebagai stylesheet saat tiba).
+       Skeleton layar awal tidak memakai ikon, jadi paint pertama tidak menunggu keduanya. -->
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <!-- Font ikon (solid = hampir semua ikon: play/pause/next/love/nav): diunduh paralel dengan CSS-nya, bukan menunggu CSS selesai di-parse. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/webfonts/fa-solid-900.woff2">
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap">
+  </noscript>
+  <script src="js/boot/preload-fallback.js"></script>
+
+  <!-- Gaya aplikasi -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Seluruh UI dirender lewat JavaScript ke dalam #app. Skrip "defer" jalan berurutan setelah dokumen di-parse:
+       shell (kerangka) -> efek gerak -> data -> config/utils/models/core/services/views/components -> App.js -> main.js. -->
+  <script defer src="js/shell/skeletons.js"></script>
+  <script defer src="js/shell/components.js"></script>
+  <script defer src="js/shell/render.js"></script>
+  <script defer src="js/effects/motion.js"></script>
+  <script defer src="js/data/catalog.js"></script>
+  <script defer src="js/config/constants.js"></script>
+  <script defer src="js/config/events.js"></script>
+  <script defer src="js/utils/array.js"></script>
+  <script defer src="js/utils/dom.js"></script>
+  <script defer src="js/utils/format.js"></script>
+  <script defer src="js/data/music-data.js"></script>
+  <script defer src="js/models/Artist.js"></script>
+  <script defer src="js/models/Song.js"></script>
+  <script defer src="js/models/Album.js"></script>
+  <script defer src="js/core/EventBus.js"></script>
+  <script defer src="js/core/Component.js"></script>
+  <script defer src="js/core/Router.js"></script>
+  <script defer src="js/services/MusicLibrary.js"></script>
+  <script defer src="js/services/SearchService.js"></script>
+  <script defer src="js/services/FavoritesStore.js"></script>
+  <script defer src="js/services/PlayQueue.js"></script>
+  <script defer src="js/services/SoundCloudPlayer.js"></script>
+  <script defer src="js/services/PlayerController.js"></script>
+  <script defer src="js/services/VideoController.js"></script>
+  <script defer src="js/services/AppStorage.js"></script>
+  <script defer src="js/services/DurationCache.js"></script>
+  <script defer src="js/services/RecentlyPlayed.js"></script>
+  <script defer src="js/services/DurationPrefetcher.js"></script>
+  <script defer src="js/components/ui/templates.js"></script>
+  <script defer src="js/views/BaseView.js"></script>
+  <script defer src="js/views/ListViews.js"></script>
+  <script defer src="js/views/VideosView.js"></script>
+  <script defer src="js/views/SearchView.js"></script>
+  <script defer src="js/views/GenreView.js"></script>
+  <script defer src="js/views/AlbumView.js"></script>
+  <script defer src="js/views/ArtistView.js"></script>
+  <script defer src="js/views/index.js"></script>
+  <script defer src="js/components/NavMenu.js"></script>
+  <script defer src="js/components/BottomNav.js"></script>
+  <script defer src="js/components/SearchBar.js"></script>
+  <script defer src="js/components/Navbar.js"></script>
+  <script defer src="js/components/Toast.js"></script>
+  <script defer src="js/components/backTarget.js"></script>
+  <script defer src="js/components/ViewOutlet.js"></script>
+  <script defer src="js/components/PlayerBar.js"></script>
+  <script defer src="js/components/NowPlaying.js"></script>
+  <script defer src="js/components/KeyboardShortcuts.js"></script>
+  <script defer src="js/components/PullToRefresh.js"></script>
+  <script defer src="js/components/ImageSkeleton.js"></script>
+  <script defer src="js/components/VideoPager.js"></script>
+  <script defer src="js/App.js"></script>
+  <script defer src="js/main.js"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+
+</html>
